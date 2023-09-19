@@ -30,12 +30,13 @@ class PreProc:
         self.data.drop(['備註'], axis = 1, inplace = True)
 
 
-    def main(self):
+    def main(self) -> pd.DataFrame:
         """
         Main execution function
         """
         self.drop_columns()
         print(self.data.shape)
+        return self.data
 
 
 if __name__ == "__main__":
