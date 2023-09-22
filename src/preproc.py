@@ -3,8 +3,8 @@ Data preprocessing module for the housing price prediction
 Authors: 
 - Yu-Chen, Den 
 - Guan-Yu, Lin
-- Jin-Jui, Chen
-- Meng-Chun, Yu
+- Chin-Jui, Chen
+- Meng-Chen, Yu
 - Tzu-Hao, Liu  
 """
 import os
