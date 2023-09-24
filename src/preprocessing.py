@@ -32,7 +32,8 @@ def preprocessing_post() -> pd.DataFrame:
     data = load_data(post_data_path)
 
     # Conserve only useful columns
-    data = data[['局址', 'lat', 'lng']]
+    # 郵遞區號可以轉換成縣市鄉鎮
+    data = data[['郵遞區號', 'lat', 'lng']]
 
     return data
 
@@ -51,4 +52,13 @@ def preprocessing_financial() -> pd.DataFrame:
     return data
 
 if __name__ == "__main__":
-    print(preprocessing_financial().head())
+    post_processing_data = preprocessing_post()
+
+    #count null value of each column for data
+    print(post_processing_data.isnull().sum())
+
+    #print each column's data type
+    print(post_processing_data.dtypes)
+
+    #print no. of unique categories
+    print(post_processing_data.nunique())
