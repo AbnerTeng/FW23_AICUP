@@ -36,9 +36,9 @@ bank <- read_external_data("金融機構基本資料.csv")
 # Make interactive map
 tmap_mode("view")
 tm_shape(house) + 
-  tm_dots() +
-  tm_shape(bus) + 
-  tm_dots(col = "#4E79A7", id = "站點UID") +
+  tm_dots(col = "單價") +
+  # tm_shape(bus) + 
+  # tm_dots(col = "#4E79A7", id = "站點UID") +
   tm_shape(train) + 
   tm_dots(col = "#A0CBE8", id = "站點名稱") +
   tm_shape(bike) + 
@@ -66,15 +66,16 @@ tm_shape(house) +
   tm_add_legend(
     type = "fill",
     labels = c(
-      "建物",
-      "公車站", "火車站", "腳踏車站", "捷運站",
+      #"公車站", 
+      "火車站", "腳踏車站", "捷運站",
       "ATM", "便利商店",
       "國小", "國中", "高中", "大學",
       "郵局", "醫療機構", "金融機構"
       ),
     col = c(
-      "black", 
-      "#4E79A7", "#A0CBE8", "#F28E2B", "#FFBE7D", 
+      #"#4E79A7", 
+      "#A0CBE8", "#F28E2B", "#FFBE7D", 
       "#59A14F", "#8CD17D",
       "#B6992D", "#F1CE63", "#499894", "#86BCB6",
-      "#E15759", "#FF9D9A", "#B07AA1"))
+      "#E15759", "#FF9D9A", "#B07AA1")
+    )
