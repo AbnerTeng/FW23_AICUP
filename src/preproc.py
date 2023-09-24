@@ -3,15 +3,15 @@ Data preprocessing module for the housing price prediction
 Authors: 
 - Yu-Chen, Den 
 - Guan-Yu, Lin
-- Jin-Jui, Chen
-- Meng-Chun, Yu
+- Chin-Jui, Chen
+- Meng-Chen, Yu
 - Tzu-Hao, Liu  
 """
 import os
 import warnings
 import numpy as np
 import pandas as pd
-from .utils import load_data
+from .utils import load_data, one_hot_encoding
 
 warnings.filterwarnings('ignore')
 
@@ -29,20 +29,23 @@ class PreProc:
         """
         self.data.drop(['備註'], axis = 1, inplace = True)
 
-    ## TODO: one-hot encoding / Label Encoding
-    """
-    import pandas as pd
-    df = pd.DataFrame({
-        'Color': ['Red', 'Blue', 'Green', 'Red', 'Blue']
-    })
-    df_encoded = pd.get_dummies(df, columns=['Color'])
-    
-    -------------------------------------------------
-    
-    from sklearn.preprocessing import LabelEncoder
-    le = LabelEncoder()
-    df['Category_Label'] = le.fit_transform(df['Category'])
-    """
+
+    def categorical_transformation(self) -> None:
+        """
+        categorical data transformation
+        
+        ---------------
+        Columns need to be transformed:
+        1. 縣市
+        2. 使用分區
+        3. 主要用途
+        4. 主要建材
+        5. 建物型態
+        """
+        self.data = one_hot_encoding(
+            self.data,
+            ['縣市', '使用分區', '主要用途', '主要建材', '建物型態']
+        )
     ## TODO: jaccard coefficient
     """
     set_A = {1, 2, 3, 4}
@@ -74,7 +77,9 @@ class PreProc:
         Main execution function
         """
         self.drop_columns()
-        print(self.data.shape)
+        self.categorical_transformation()
+        print(self.data.info())
+        print(self.data.head())
         return self.data
 
 
