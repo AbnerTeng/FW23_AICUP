@@ -9,7 +9,6 @@ Authors:
 """
 import os
 import warnings
-import numpy as np
 import pandas as pd
 from .utils import load_data, one_hot_encoding
 
