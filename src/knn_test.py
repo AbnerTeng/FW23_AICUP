@@ -5,8 +5,10 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-from .add_coordinates import add_twd97_coordinates_to_dataframe as add_twd97
-from .utils import load_data
+from .utils import (
+    load_data,
+    add_twd97_coordinates_to_dataframe as add_twd97
+)
 
 class GetNearestNeighbors:
     """
@@ -19,7 +21,7 @@ class GetNearestNeighbors:
         self.facility_name = facility_name
 
 
-    def split_data(self) -> pd.DataFrame:
+    def split_data(self) -> tuple:
         """
         Get the (x, y) for facility and target
         """
@@ -33,7 +35,7 @@ class GetNearestNeighbors:
             facility_pos: pd.DataFrame,
             target_pos: pd.DataFrame,
             k: int
-        ) -> None:
+        ) -> np.ndarray:
         """
         get the k nearest neighbors for each buildings
         """
@@ -43,8 +45,7 @@ class GetNearestNeighbors:
         )
         nbrs.fit(facility_pos)
         distances, _ = nbrs.kneighbors(target_pos, n_neighbors = k)
-        avg_distances = np.mean(distances, axis = 1)
-        return avg_distances
+        return distances
 
 
     def main(self) -> None:
@@ -52,7 +53,8 @@ class GetNearestNeighbors:
         Main function
         """
         facility_pos, target_pos = self.split_data()
-        avg_distances = self.get_avg_distances(facility_pos, target_pos, self.k)
+        distances = self.get_avg_distances(facility_pos, target_pos, self.k)
+        avg_distances = np.mean(distances, axis = 1)
         self.target[f'avg_distances_{self.facility_name}'] = avg_distances
         print(self.target.head())
 
@@ -64,5 +66,4 @@ if __name__ == "__main__":
             f"{os.getcwd()}/data/training_data.csv",
             3, f'{external_datas[:2]}'
         )
-        print(get_nn.target.shape)
         get_nn.main()
