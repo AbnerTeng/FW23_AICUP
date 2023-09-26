@@ -14,7 +14,9 @@ Team member: 鄧昱辰、林冠妤、陳瑾叡、游孟純、劉子豪
     - predict.py
     - preproc.py
     - utils.py
-    - add_coordinates.py
+    - building_dist.py
+    - knn_test.py
+    - n_facilities.py
 - /test
 - map.R
 - .gitignore
@@ -41,6 +43,24 @@ from .utils import (
     add_wgs84_coordinates_to_dataframe as add_wgs84
 )
 ```
+
+**Examples of inheritance of classes inside `/src`**
+
+```python
+from .father_class import FatherClass
+
+class YourClass(FatherClass):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+```
+
+**Examples of `src/predict.py`**
+
+```plaintext
+python -m src.predict --dims <number of features>
+```
+
+argument `--dims` is the number of features in use.
 
 ## Execute
 
