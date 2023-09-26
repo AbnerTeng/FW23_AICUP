@@ -36,11 +36,9 @@ pip3 install -r requirements.txt
 
 ```python
 from .utils import (
-    load_data, one_hot_encoding
-)
-from .add_coordinates import (
-    add_twd97_coordinates_to_dataframe,
-    add_wgs84_coordinates_to_dataframe
+    load_data, one_hot_encoding,
+    add_twd97_coordinates_to_dataframe as add_twd97,
+    add_wgs84_coordinates_to_dataframe as add_wgs84
 )
 ```
 
