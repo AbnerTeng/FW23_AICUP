@@ -5,8 +5,10 @@ File for preprocessing educational institution data
 import os
 import re
 import pandas as pd
-from .utils import load_data
-from .add_coordinates import add_twd97_coordinates_to_dataframe
+from .utils import (
+    load_data, 
+    add_twd97_coordinates_to_dataframe
+)
 
 PATH = f'{os.getcwd()}/data/external_data'
 
