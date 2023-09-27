@@ -1,7 +1,5 @@
 """
 File for preprocessing educational institution data
-
-TODO: Convert coordinate system to TWD97
 """
 
 import os
@@ -10,17 +8,17 @@ import pandas as pd
 from .utils import load_data
 from .add_coordinates import add_twd97_coordinates_to_dataframe
 
+PATH = f'{os.getcwd()}/data/external_data'
+
 def preprocess_univ() -> pd.DataFrame:
     """
     Preprocess university data
     """
-    univ_data_path = os.path.join('data', 'external_data')
-    univ_data_path = os.path.join(univ_data_path, '大學基本資料.csv')
-
+    univ_data_path = os.path.join(PATH, '大學基本資料.csv')
     data = load_data(univ_data_path)
 
     # sum the number of students  and conserve only useful columns
-    data = data.groupby('學校名稱', as_index=False).agg({ '縣市名稱': 'first', '總計': 'sum', 'lat': 'first', 'lng': 'first'})
+    data = data.groupby('學校名稱', as_index=False).agg({ '縣市名稱': 'first', '縣市名稱': 'first', '總計': 'sum', 'lat': 'first', 'lng': 'first'})
     data = data.rename(columns={'總計': '學生總數'})
     data['縣市名稱'] = data['縣市名稱'].str.replace(r'\d| ', '', regex=True)
     data = add_twd97_coordinates_to_dataframe(data)
@@ -28,14 +26,12 @@ def preprocess_univ() -> pd.DataFrame:
     return data
 
 
-def preprocessing_SHS() -> pd.DataFrame:
+def preprocessing_shs() -> pd.DataFrame:
     """
     Preprocess senior high school data
     """
-    SHS_data_path = os.path.join('data', 'external_data')
-    SHS_data_path = os.path.join(SHS_data_path, '高中基本資料.csv')
-    
-    data = load_data(SHS_data_path)   
+    shs_data_path = os.path.join(PATH, '高中基本資料.csv')
+    data = load_data(shs_data_path)   
     data = add_twd97_coordinates_to_dataframe(data)
     
     # sum the number of teachers and students sepreately
@@ -48,14 +44,12 @@ def preprocessing_SHS() -> pd.DataFrame:
     return data
 
 
-def preprocessing_JHS() -> pd.DataFrame:
+def preprocessing_hjs() -> pd.DataFrame:
     """
     Preprocess junior high school data
     """
-    JHS_data_path = os.path.join('data', 'external_data')
-    JHS_data_path = os.path.join(JHS_data_path, '國中基本資料.csv')
-
-    data = load_data(JHS_data_path)
+    jhs_data_path = os.path.join(PATH, '國中基本資料.csv')
+    data = load_data(jhs_data_path)
     data = add_twd97_coordinates_to_dataframe(data)
 
     # sum the number of teachers and students sepreately
@@ -70,22 +64,21 @@ def preprocessing_JHS() -> pd.DataFrame:
     return data
 
 
-def preprocessing_ES() -> pd.DataFrame:
+def preprocessing_es() -> pd.DataFrame:
     """
     Preprocess junior high school data
     """
-    ES_data_path = os.path.join('data', 'external_data')
-    ES_data_path = os.path.join(ES_data_path, '國小基本資料.csv')
-
-    data = load_data(ES_data_path)
+    es_data_path = os.path.join(PATH, '國小基本資料.csv')
+    data = load_data(es_data_path)
     data = add_twd97_coordinates_to_dataframe(data)
 
     # sum the number of teachers and students sepreately
     data['教師總數'] = data['男專任教師'] + data['女專任教師']
-    data['學生總數'] = data['1年級男學生數'] + data['2年級男學生數'] + data['3年級男學生數'] +\
-                        data['4年級男學生數'] + data['5年級男學生數'] + data['6年級男學生數'] +\
-                        data['1年級女學生數'] + data['2年級女學生數'] + data['3年級女學生數'] +\
-                        data['4年級女學生數'] + data['5年級女學生數'] + data['6年級女學生數']   
+    
+    data['學生總數'] = 0
+    for i in range(1, 7, 1):
+        data['學生總數'] += data[f'{i}年級男學生數']
+        data['學生總數'] += data[f'{i}年級女學生數']
 
     # Conserve only useful columns
     # data = data[['金融機構名稱','地址', 'lat', 'lng']]
@@ -95,13 +88,13 @@ def preprocessing_ES() -> pd.DataFrame:
  
 
 if __name__ == "__main__":
-    univ_processing_data = preprocess_univ()
+    es_processing_data = preprocessing_es()
     
     # print info of data
-    print(univ_processing_data.info())
+    print(es_processing_data.info())
     
     #print no. of unique categories
-    print(univ_processing_data.nunique())
+    print(es_processing_data.nunique())
 
-    print(univ_processing_data.head(5))
+    print(es_processing_data.head(5))
 
