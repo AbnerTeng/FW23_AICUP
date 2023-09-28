@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from shapely.geometry import Point
 from .utils import load_data, add_twd97_coordinates_to_dataframe as add_twd97
@@ -59,10 +60,20 @@ class MeanDist():
         return self.calc_nn_mean_dist(row.iloc[0], row.iloc[1])
 
 if __name__ == "__main__":
-    TARGET_DATA = "data/small_training_data.csv"
-    FACILITY_DATA = "data/external_data/金融機構基本資料.csv"
-    OUTPUT_DATA = "data/output.csv"
+    #Just change this line before you run this script
+    TARGET_PATH = f"{os.getcwd()}/data/training_data.csv"
 
-    md = MeanDist(FACILITY_DATA, TARGET_DATA)
+    for external_datas in os.listdir(f"{os.getcwd()}/data/external_data"):
+        #get file name
+        file_name = external_datas.split('.')[0].replace('資料', '')
 
-    md.update_dataframe().to_csv(OUTPUT_DATA, index=False)
+        print(f"{os.getcwd()}/data/external_data/{external_datas}")
+        md = MeanDist(
+            f"{os.getcwd()}/data/external_data/{external_datas}",
+            TARGET_PATH
+            )
+
+        md.update_dataframe(column_name=f"mean_distance_to_{file_name}").to_csv(
+            f"{os.getcwd()}/data/small_training_data.csv", 
+            index=False
+            )
