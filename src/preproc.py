@@ -9,7 +9,6 @@ Authors:
 """
 import os
 import warnings
-import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from .utils import load_data, one_hot_encoding
@@ -33,7 +32,7 @@ class PreProc:
         self.data.drop(['備註'], axis = 1, inplace = True)
 
 
-    def categorical_transformation(self) -> None:
+    def categorical_transformation(self) -> pd.DataFrame:
         """
         categorical data transformation
         
@@ -49,24 +48,7 @@ class PreProc:
             self.data,
             ['縣市', '使用分區', '主要用途', '主要建材', '建物型態']
         )
-
-
-    def feature_selection(self) -> tuple:
-        """
-        Feature selection
-        """
-        self.data.drop(
-            columns = ['鄉鎮市區', '路名', 'ID'],
-            inplace = True
-        )
-        features, output = self.data.drop(columns = ['單價']), self.data['單價']
-        self.model.fit(features, output)
-        feature_importance = self.model.feature_importances_
-        indices = np.argsort(feature_importance)[::-1][:self.dims]
-        dim_reduction = pd.DataFrame()
-        for idx in indices:
-            dim_reduction[features.columns[idx]] = features[features.columns[idx]]
-        return dim_reduction, output
+        return self.data
 
 
     def main(self) -> pd.DataFrame:
@@ -74,9 +56,8 @@ class PreProc:
         Main execution function
         """
         self.drop_columns()
-        self.categorical_transformation()
-        feature, output = self.feature_selection()
-        return feature, output
+        self.data = self.categorical_transformation()
+        return self.data
 
 
 if __name__ == "__main__":
