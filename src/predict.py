@@ -1,5 +1,7 @@
 """
-Housing price prediction module
+Housing Price prediction module
+
+Author: Yu-Chen, Den
 """
 import os
 import warnings
@@ -80,4 +82,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
     predict = Predict(args.dims)
     predict.main()
-        
