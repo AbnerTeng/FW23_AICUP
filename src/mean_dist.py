@@ -1,16 +1,33 @@
+"""
+File for calculate the mean value of k nearest neighbors
+
+Author: Tzu-Hao, Liu / Yu-Chen, Den
+-----------------------------------
+Arguments:
+    --k: k nearest neighbors
+
+Example:
+    python -m src.mean_dist --k 3
+"""
 import os
 import pandas as pd
+from tqdm import tqdm
+from argparse import ArgumentParser
 from shapely.geometry import Point
-from .utils import load_data, add_twd97_coordinates_to_dataframe as add_twd97
+from .utils import (
+    load_data,
+    add_twd97_coordinates_to_dataframe as add_twd97
+)
 
 class MeanDist():
     """
     The class that can get the mean value of k nearest neighbors
     """
-    def __init__(self, facility_path: str, target_path: str):
+    def __init__(self, facility_path: str, target_path: str, k: int) -> None:
         self.facility = load_data(facility_path)
         self.target = load_data(target_path)
         self.facilities_with_dist, self.target_pos = self.split_data()
+        self.k = k
 
     def split_data(self) -> tuple:
         """
@@ -20,7 +37,7 @@ class MeanDist():
         target_pos = self.target[['橫坐標', '縱坐標']]
         return facility_pos, target_pos
 
-    def calc_nn_mean_dist(self,x:int, y:int, k=3)->float:
+    def calc_nn_mean_dist(self, x: int, y: int) -> float:
         """
         Get the mean value of point to k nearest neighbors
         """
@@ -36,12 +53,12 @@ class MeanDist():
 
         #Sort the dataframe by distance
         self.facilities_with_dist = self.facilities_with_dist.sort_values(
-            by = 'distance', 
+            by = 'distance',
             ascending=True
         )
 
         #return mean value of k nearest neighbors
-        mean = self.facilities_with_dist.iloc[0:k, 2].mean()
+        mean = self.facilities_with_dist.iloc[0: self.k, 2].mean()
         return mean
 
     def update_dataframe(self, column_name="nn_mean_distance") -> pd.DataFrame:
@@ -53,27 +70,31 @@ class MeanDist():
 
         return self.target
 
-    def __mean_function(self, row):
+    def __mean_function(self, row: pd.Series) -> float:
         """
         Private function for calculate mean
         """
         return self.calc_nn_mean_dist(row.iloc[0], row.iloc[1])
 
 if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument('--k', type = int, default = 3)
+    args = parser.parse_args()
     #Just change this line before you run this script
     TARGET_PATH = f"{os.getcwd()}/data/training_data.csv"
 
-    for external_datas in os.listdir(f"{os.getcwd()}/data/external_data"):
+    for external_datas in tqdm(os.listdir(f"{os.getcwd()}/data/external_data")):
         #get file name
         file_name = external_datas.split('.')[0].replace('資料', '')
 
         print(f"{os.getcwd()}/data/external_data/{external_datas}")
         md = MeanDist(
             f"{os.getcwd()}/data/external_data/{external_datas}",
-            TARGET_PATH
-            )
+            TARGET_PATH,
+            args.k
+        )
 
         md.update_dataframe(column_name=f"mean_distance_to_{file_name}").to_csv(
             f"{os.getcwd()}/data/small_training_data.csv", 
             index=False
-            )
+        )
