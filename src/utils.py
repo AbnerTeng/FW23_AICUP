@@ -1,8 +1,10 @@
 """
 useful utils
 """
+import numpy as np
 import pandas as pd
 import geopandas as gpd
+from sklearn.ensemble import RandomForestRegressor
 
 def load_data(path: str) -> pd.DataFrame:
     """
@@ -48,3 +50,39 @@ def add_wgs84_coordinates_to_dataframe(data: pd.DataFrame) -> pd.DataFrame:
     ).to_crs(epsg = 4326)
     new_coords = gdf.get_coordinates().rename(columns={"x": "lng", "y": "lat"})
     return pd.concat([data, new_coords], axis=1)
+
+
+def feature_select(
+        data: pd.DataFrame,
+        pred_target: str,
+        dims: int,
+        model=RandomForestRegressor,
+    ) -> tuple:
+    """
+    Feature selection function
+    
+    Warnings:
+        Remember to drop the useless columns before using this function.
+    
+    Arguments
+    ---------
+    - data: pd.DataFrame
+        The data you want to select features from.
+    - pred_target: str
+        The y label of the data.
+    - dims: int
+        The number of important features you want to select.
+    - model: sklearn model
+        The model you want to use to select features.
+        default: RandomForestRegressor
+    """
+    features, output = data.drop(columns = [pred_target]), data[pred_target]
+    model.fit(features, output)
+    feature_importance = model.feature_importances_
+    indices = np.argsort(feature_importance)[::-1][:dims]
+    dim_reduction_data = pd.DataFrame()
+
+    for idx in indices:
+        dim_reduction_data[features.columns[idx]] = features[features.columns[idx]]
+    return dim_reduction_data, output
+    
