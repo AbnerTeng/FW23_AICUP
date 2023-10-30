@@ -11,7 +11,7 @@ import os
 import warnings
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from .utils import load_data, one_hot_encoding
+from .utils import load_data, one_hot_encoding, feature_select
 
 warnings.filterwarnings('ignore')
 
@@ -48,16 +48,22 @@ class PreProc:
             self.data,
             ['縣市', '使用分區', '主要用途', '主要建材', '建物型態']
         )
-        return self.data
 
 
-    def main(self) -> pd.DataFrame:
+    def main(self) -> tuple:
         """
         Main execution function
         """
         self.drop_columns()
-        self.data = self.categorical_transformation()
-        return self.data
+        self.categorical_transformation()
+        self.data.drop(
+            columns = ['鄉鎮市區', '路名', 'ID'],
+            inplace = True
+        )
+        feature, output = feature_select(
+            self.data, '單價', 10, self.model
+        )
+        return feature, output
 
 
 if __name__ == "__main__":

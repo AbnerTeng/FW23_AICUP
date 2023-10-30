@@ -26,6 +26,13 @@ Team member: 鄧昱辰、林冠妤、陳瑾叡、游孟純、劉子豪
 - requirements_dev.txt
 ```
 
+## Create virtual environment (optional but suggest)
+
+```plaintext
+python3 -m venv <venv_name> python=3.10
+source <venv_name>/bin/activate
+```
+
 ## Used packages
 
 ```plaintext
