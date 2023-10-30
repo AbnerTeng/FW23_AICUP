@@ -6,7 +6,6 @@ Author: Yu-Chen, Den
 import os
 import warnings
 import pandas as pd
-from argparse import ArgumentParser
 from tqdm import tqdm
 from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
@@ -20,6 +19,19 @@ warnings.filterwarnings('ignore')
 class Predict(PreProc):
     """
     Predict class
+    
+    In the predict class, we inherit the PreProc class to do the data preprocessing first.
+    Then, we use the training data to train the model and predict the testing data.
+    
+    Attributes:
+        models: dict
+            The dictionary of models
+        data: DataFrame
+            The training data
+        feature: DataFrame
+            The features of training data
+        output: DataFrame
+            The output of training data
     """
     def __init__(self, dims: int) -> None:
         super().__init__(
@@ -61,24 +73,3 @@ class Predict(PreProc):
             pred[name] = model.predict(x_test)
             mae[name] = mean_absolute_error(y_test, pred[name])
         return pred, mae
-
-
-    def main(self):
-        x_train, x_test, y_train, y_test = self.train_test_split()
-        print(f"Size of every sets: \
-            {x_train.shape},\
-            {x_test.shape},\
-            {y_train.shape},\
-            {y_test.shape}"
-        )
-        _, mae = self.train()
-        print(mae)
-        ## pred.to_csv('data/pred.csv', index  = False)
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument('--dims', type = int, default = 10)
-    args = parser.parse_args()
-    predict = Predict(args.dims)
-    predict.main()

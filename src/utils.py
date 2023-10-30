@@ -79,6 +79,7 @@ def feature_select(
     features, output = data.drop(columns = [pred_target]), data[pred_target]
     model.fit(features, output)
     feature_importance = model.feature_importances_
+    print(feature_importance)
     indices = np.argsort(feature_importance)[::-1][:dims]
     dim_reduction_data = pd.DataFrame()
 
