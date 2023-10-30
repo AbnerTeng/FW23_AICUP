@@ -62,6 +62,7 @@ class PreProc:
         features, output = self.data.drop(columns = ['單價']), self.data['單價']
         self.model.fit(features, output)
         feature_importance = self.model.feature_importances_
+        print(feature_importance)
         indices = np.argsort(feature_importance)[::-1][:self.dims]
         dim_reduction = pd.DataFrame()
         for idx in indices:

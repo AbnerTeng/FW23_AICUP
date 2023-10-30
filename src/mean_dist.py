@@ -1,3 +1,6 @@
+"""
+Calculate mean distance of k nearest neighbors
+"""
 import os
 import pandas as pd
 from shapely.geometry import Point
@@ -20,6 +23,7 @@ class MeanDist():
         target_pos = self.target[['橫坐標', '縱坐標']]
         return facility_pos, target_pos
 
+
     def calc_nn_mean_dist(self,x:int, y:int, k=3)->float:
         """
         Get the mean value of point to k nearest neighbors
@@ -36,13 +40,14 @@ class MeanDist():
 
         #Sort the dataframe by distance
         self.facilities_with_dist = self.facilities_with_dist.sort_values(
-            by = 'distance', 
+            by = 'distance',
             ascending=True
         )
 
         #return mean value of k nearest neighbors
         mean = self.facilities_with_dist.iloc[0:k, 2].mean()
         return mean
+
 
     def update_dataframe(self, column_name="nn_mean_distance") -> pd.DataFrame:
         """
@@ -52,6 +57,7 @@ class MeanDist():
         self.target[column_name] = self.target_pos.apply(self.__mean_function, axis=1)
 
         return self.target
+
 
     def __mean_function(self, row):
         """

@@ -4,7 +4,6 @@ Housing price prediction module
 import os
 import warnings
 import pandas as pd
-from argparse import ArgumentParser
 from tqdm import tqdm
 from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
@@ -26,11 +25,11 @@ class Predict(PreProc):
         )
         self.models = {
             'RF': RandomForestRegressor(
-                random_state = 0,
-                n_estimators = 300
+                random_state=0,
+                n_estimators=300
             ),
-            'XGB': XGBRegressor(random_state = 0),
-            'LGBM': LGBMRegressor(random_state = 0)
+            'XGB': XGBRegressor(random_state=0),
+            'LGBM': LGBMRegressor(random_state=0)
         }
         # self.data = super().main().drop(columns = ['鄉鎮市區', '路名'])
         self.feature, self.output = super().main()
@@ -42,7 +41,7 @@ class Predict(PreProc):
         """
         # features, output = self.data.drop(columns = ['ID', '單價']), self.data['單價']
         x_train, x_test, y_train, y_test = train_test_split(
-            self.feature, self.output, test_size = 0.2, random_state = 0
+            self.feature, self.output, test_size=0.2, random_state=0
         )
         return x_train, x_test, y_train, y_test
 
@@ -59,25 +58,4 @@ class Predict(PreProc):
             pred[name] = model.predict(x_test)
             mae[name] = mean_absolute_error(y_test, pred[name])
         return pred, mae
-
-
-    def main(self):
-        x_train, x_test, y_train, y_test = self.train_test_split()
-        print(f"Size of every sets: \
-            {x_train.shape},\
-            {x_test.shape},\
-            {y_train.shape},\
-            {y_test.shape}"
-        )
-        _, mae = self.train()
-        print(mae)
-        ## pred.to_csv('data/pred.csv', index  = False)
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument('--dims', type = int, default = 10)
-    args = parser.parse_args()
-    predict = Predict(args.dims)
-    predict.main()
         
