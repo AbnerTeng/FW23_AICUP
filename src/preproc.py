@@ -60,10 +60,10 @@ class PreProc:
             columns = ['鄉鎮市區', '路名', 'ID'],
             inplace = True
         )
-        feature, output = feature_select(
-            self.data, '單價', 10, self.model
-        )
-        return feature, output
+        # feature, output = feature_select(
+        #     self.data, '單價', 10, self.model
+        # )
+        # return feature, output
 
 
 if __name__ == "__main__":
