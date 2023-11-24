@@ -12,7 +12,6 @@ Example:
 import os
 import pandas as pd
 from tqdm import tqdm
-from argparse import ArgumentParser
 from shapely.geometry import Point
 from .utils import (
     load_data,
@@ -77,11 +76,8 @@ class MeanDist():
         return self.calc_nn_mean_dist(row.iloc[0], row.iloc[1])
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument('--k', type = int, default = 3)
-    args = parser.parse_args()
     #Just change this line before you run this script
-    TARGET_PATH = f"{os.getcwd()}/data/training_data.csv"
+    TARGET_PATH = f"{os.getcwd()}/data/public_dataset.csv"
 
     for external_datas in tqdm(os.listdir(f"{os.getcwd()}/data/external_data")):
         #get file name
@@ -91,10 +87,10 @@ if __name__ == "__main__":
         md = MeanDist(
             f"{os.getcwd()}/data/external_data/{external_datas}",
             TARGET_PATH,
-            args.k
+            3
         )
 
         md.update_dataframe(column_name=f"mean_distance_to_{file_name}").to_csv(
-            f"{os.getcwd()}/data/small_training_data.csv", 
+            f"{os.getcwd()}/data/public_dataset.csv", 
             index=False
         )

@@ -1,7 +1,6 @@
 """
 Get average distance of k nearest neighbors
 """
-import os
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
@@ -48,22 +47,20 @@ class GetNearestNeighbors:
         return distances
 
 
-    def main(self) -> None:
+    def update_columns(self, avg_dist):
+        """
+        Update the dataframe
+        """
+        self.target[f'avg_distances_{self.facility_name}'] = avg_dist
+        return self.target
+
+
+    def main(self) -> np.ndarray:
         """
         Main function
         """
         facility_pos, target_pos = self.split_data()
+        facility_pos.fillna(0, inplace=True)
         distances = self.get_avg_distances(facility_pos, target_pos, self.k)
         avg_distances = np.mean(distances, axis = 1)
-        self.target[f'avg_distances_{self.facility_name}'] = avg_distances
-        print(self.target.head())
-
-
-if __name__ == "__main__":
-    for external_datas in os.listdir(f"{os.getcwd()}/data/external_data"):
-        get_nn = GetNearestNeighbors(
-            f"{os.getcwd()}/data/external_data/{external_datas}",
-            f"{os.getcwd()}/data/training_data.csv",
-            3, f'{external_datas[:2]}'
-        )
-        get_nn.main()
+        return avg_distances

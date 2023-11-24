@@ -14,7 +14,7 @@ def merge(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    TARGET_PATH = f"{os.getcwd()}/data/training_data.csv"
+    TARGET_PATH = f"{os.getcwd()}/data/private_dataset.csv"
     nfac = NFacilities(
         f"{os.getcwd()}/data/lib_xy.csv",
         TARGET_PATH,
@@ -23,5 +23,5 @@ if __name__ == "__main__":
     library_target = nfac.main()
     training_data = pd.read_csv(TARGET_PATH)
     training_data = merge(training_data, library_target)
-    training_data.to_csv(f"{os.getcwd()}/data/training_data.csv", index = False)    
+    training_data.to_csv(f"{os.getcwd()}/data/private_dataset.csv", index = False)    
     ## TODO: merge the data

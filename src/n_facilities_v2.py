@@ -9,10 +9,10 @@ Example:
     python -m src.n_facilities_v2 --radius 500
 """
 import os
+from argparse import ArgumentParser
 import pandas as pd
 from tqdm import tqdm
 from shapely.geometry import Point
-from argparse import ArgumentParser
 from .utils import (
     load_data,
     add_twd97_coordinates_to_dataframe as add_twd97
@@ -37,7 +37,9 @@ class NFacilities:
         return facility_pos, target_pos
 
 
-    def calculate_dist(self, facility_pos: pd.DataFrame, target_pos: pd.DataFrame, num: int) -> pd.DataFrame:
+    def calculate_dist(
+            self, facility_pos: pd.DataFrame, target_pos: pd.DataFrame, num: int
+        ) -> pd.DataFrame:
         """
         Get the distance between each facility and the target
         -----------------------------------------------------
@@ -81,16 +83,3 @@ class NFacilities:
 
         target_calculated = target_calculated[['ID', 'N_facilities']]
         return target_calculated
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument('--radius', '-r', type = int, default = 500)
-    args = parser.parse_args()
-
-    nfac = NFacilities(
-        f"{os.getcwd()}/data/external_data/ATM資料.csv",
-        f"{os.getcwd()}/data/small_training_data.csv",
-        args.radius
-    )
-    print(nfac.main())

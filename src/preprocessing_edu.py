@@ -3,7 +3,6 @@ File for preprocessing educational institution data
 """
 
 import os
-import re
 import pandas as pd
 from .utils import (
     load_data, 
@@ -87,16 +86,11 @@ def preprocessing_es() -> pd.DataFrame:
     data = data[['學校名稱', '縣市名稱', '教師總數', '學生總數', 'lat', 'lng', '橫坐標', '縱坐標']]
 
     return data
- 
+
 
 if __name__ == "__main__":
     es_processing_data = preprocessing_es()
-    
-    # print info of data
-    print(es_processing_data.info())
-    
-    #print no. of unique categories
-    print(es_processing_data.nunique())
-
-    print(es_processing_data.head(5))
-
+    print(es_processing_data.columns)
+    org_data = load_data(f'{os.getcwd()}/data/training_data.csv')
+    org_data[es_processing_data.columns] = es_processing_data
+    print(org_data.tail())

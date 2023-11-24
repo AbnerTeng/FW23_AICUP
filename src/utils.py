@@ -14,18 +14,36 @@ def load_data(path: str) -> pd.DataFrame:
     return data
 
 
-def one_hot_encoding(data: pd.DataFrame, cat_cols: list) -> pd.DataFrame:
+def train_test_split(feat, label, ratio):
     """
-    One-hot-encoding function
+    Train test split from scratch
     """
-    data_encoded = pd.get_dummies(data, columns = cat_cols)
-    return data_encoded
+    x_train, x_valid = feat[:int(len(feat) * ratio)], feat[int(len(feat) * ratio):]
+    y_train, y_valid = label[:int(len(label) * ratio)], label[int(len(label) * ratio):]
+    return x_train, x_valid, y_train, y_valid
+
+
+def logarithm(data):
+    """
+    Log transformation
+    """
+    return data.apply(lambda x: np.log(x))
+
+
+def get_id(path: str) -> pd.Series:
+    """
+    Get the ID column from the dataset
+    """
+    data = load_data(path)
+    return data['ID']
 
 
 def add_twd97_coordinates_to_dataframe(data: pd.DataFrame) -> pd.DataFrame:
     """
-    This is a function to add TWD97 coordinates into a pandas DataFrame which contains WGS84 coordinates.
-    Note: original column names of coordinates are lng & lat, new column names of coordinates are 橫坐標 & 縱坐標
+    - This is a function to add TWD97 coordinates into a pandas DataFrame
+      which contains WGS84 coordinates.
+    Note: original column names of coordinates are lng & lat,
+    new column names of coordinates are 橫坐標 & 縱坐標
     """
 
     gdf = gpd.GeoDataFrame(
@@ -39,8 +57,10 @@ def add_twd97_coordinates_to_dataframe(data: pd.DataFrame) -> pd.DataFrame:
 
 def add_wgs84_coordinates_to_dataframe(data: pd.DataFrame) -> pd.DataFrame:
     """
-    This is a function to add WGS84 coordinates into a pandas DataFrame which contains TWD97 coordinates.
-    Note: original column names of coordinates are 橫坐標 & 縱坐標, new column names of coordinates are lng & lat
+    - This is a function to add WGS84 coordinates into a pandas DataFrame 
+      which contains TWD97 coordinates.
+    Note: original column names of coordinates are 橫坐標 & 縱坐標,
+    new column names of coordinates are lng & lat
     """
 
     gdf = gpd.GeoDataFrame(
