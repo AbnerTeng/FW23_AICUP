@@ -4,7 +4,7 @@ useful utils
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-# from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor
 
 def load_data(path: str) -> pd.DataFrame:
     """
@@ -56,7 +56,7 @@ def feature_select(
         data: pd.DataFrame,
         pred_target: str,
         dims: int,
-        # model=RandomForestRegressor,
+        model=RandomForestRegressor,
     ) -> tuple:
     """
     Feature selection function
