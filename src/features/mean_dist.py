@@ -10,32 +10,57 @@ Example:
     python -m src.mean_dist --k 3
 """
 import os
-import pandas as pd
-from tqdm import tqdm
+from typing import Tuple
 from argparse import ArgumentParser
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import NearestNeighbors
+from tqdm import tqdm
 from shapely.geometry import Point
-from .utils import (
+from ..utils.data_utils import (
     load_data,
-    add_twd97_coordinates_to_dataframe as add_twd97
+    add_coordinates
 )
 
-class MeanDist():
+
+class MeanDist:
     """
     The class that can get the mean value of k nearest neighbors
     """
-    def __init__(self, facility_path: str, target_path: str, k: int) -> None:
+    def __init__(self, facility_path: str, target_path: str, k: int, facility_name: str) -> None:
         self.facility = load_data(facility_path)
         self.target = load_data(target_path)
         self.facilities_with_dist, self.target_pos = self.split_data()
+        self.facility_name = facility_name
         self.k = k
 
-    def split_data(self) -> tuple:
+
+    def split_data(self) -> Tuple(pd.DataFrame, pd.DataFrame):
         """
         Get the (x, y) for facility and target
         """
-        facility_pos = add_twd97(self.facility)[['橫坐標', '縱坐標']]
+        facility_pos = add_coordinates(self.facility, method="twd97")[['橫坐標', '縱坐標']]
         target_pos = self.target[['橫坐標', '縱坐標']]
         return facility_pos, target_pos
+
+
+    def get_avg_distances(
+        self,
+        facility_pos: pd.DataFrame,
+        target_pos: pd.DataFrame,
+        k: int
+    ) -> np.ndarray:
+        """
+        get the k nearest neighbors for each buildings
+        """
+        facility_pos, target_pos = np.array(facility_pos), np.array(target_pos)
+        nbrs = NearestNeighbors(
+            n_neighbors = k,
+        )
+        nbrs.fit(facility_pos)
+        distances, _ = nbrs.kneighbors(target_pos, n_neighbors = k)
+        return distances
+
 
     def calc_nn_mean_dist(self, x: int, y: int) -> float:
         """
@@ -43,7 +68,6 @@ class MeanDist():
         """
         ref_point = Point(x, y)
 
-        #Get the distance between each facility and the target
         self.facilities_with_dist['distance'] = self.facilities_with_dist.apply(
             lambda row: ref_point.distance(
                 Point(row['橫坐標'], row['縱坐標'])
@@ -51,24 +75,23 @@ class MeanDist():
             axis = 1
         )
 
-        #Sort the dataframe by distance
         self.facilities_with_dist = self.facilities_with_dist.sort_values(
             by = 'distance',
             ascending=True
         )
 
-        #return mean value of k nearest neighbors
         mean = self.facilities_with_dist.iloc[0: self.k, 2].mean()
         return mean
 
-    def update_dataframe(self, column_name="nn_mean_distance") -> pd.DataFrame:
+
+    def update_dataframe(self, column_name: str="nn_mean_distance") -> pd.DataFrame:
         """
         Update the dataframe
         """
-        # Apply the mean function using lambda and assign the result to a new column in self.target
         self.target[column_name] = self.target_pos.apply(self.__mean_function, axis=1)
 
         return self.target
+
 
     def __mean_function(self, row: pd.Series) -> float:
         """
@@ -76,22 +99,32 @@ class MeanDist():
         """
         return self.calc_nn_mean_dist(row.iloc[0], row.iloc[1])
 
+
+    def main_knn(self) -> None:
+        """
+        Main function
+        """
+        distances = self.get_avg_distances(self.facilities_with_dist, self.target_pos, self.k)
+        avg_distances = np.mean(distances, axis = 1)
+        self.target[f'avg_distances_{self.facility_name}'] = avg_distances
+        print(self.target.head())
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--k', type = int, default = 3)
     args = parser.parse_args()
-    #Just change this line before you run this script
     TARGET_PATH = f"{os.getcwd()}/data/training_data.csv"
 
     for external_datas in tqdm(os.listdir(f"{os.getcwd()}/data/external_data")):
-        #get file name
         file_name = external_datas.split('.')[0].replace('資料', '')
 
         print(f"{os.getcwd()}/data/external_data/{external_datas}")
         md = MeanDist(
             f"{os.getcwd()}/data/external_data/{external_datas}",
             TARGET_PATH,
-            args.k
+            args.k,
+            file_name
         )
 
         md.update_dataframe(column_name=f"mean_distance_to_{file_name}").to_csv(
