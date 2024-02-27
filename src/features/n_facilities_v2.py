@@ -9,14 +9,15 @@ Example:
     python -m src.n_facilities_v2 --radius 500
 """
 import os
+from argparse import ArgumentParser
 import pandas as pd
 from tqdm import tqdm
 from shapely.geometry import Point
-from argparse import ArgumentParser
-from .utils import (
+from ..utils.data_utils import (
     load_data,
-    add_twd97_coordinates_to_dataframe as add_twd97
+    add_coordinates
 )
+
 
 class NFacilities:
     """
@@ -32,7 +33,7 @@ class NFacilities:
         """
         Get the (x, y) for facility and target
         """
-        facility_pos = add_twd97(self.facility)[['橫坐標', '縱坐標']]
+        facility_pos = add_coordinates(self.facility, method="twd97")[['橫坐標', '縱坐標']]
         target_pos = self.target[['橫坐標', '縱坐標']]
         return facility_pos, target_pos
 

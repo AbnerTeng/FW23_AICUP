@@ -11,7 +11,10 @@ import os
 import warnings
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from .utils import load_data, one_hot_encoding, feature_select
+from .utils.data_utils import (
+    load_data,
+    one_hot_encoding
+)
 
 warnings.filterwarnings('ignore')
 
@@ -60,10 +63,6 @@ class PreProc:
             columns = ['鄉鎮市區', '路名', 'ID'],
             inplace = True
         )
-        # feature, output = feature_select(
-        #     self.data, '單價', 10, self.model
-        # )
-        # return feature, output
 
 
 if __name__ == "__main__":
