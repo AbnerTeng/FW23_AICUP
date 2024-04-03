@@ -1,19 +1,66 @@
 """
 useful utils
 """
-from typing import List, Tuple
+from typing import List, Tuple, Union
+import yaml
 import numpy as np
 import pandas as pd
 import geopandas as gpd
 from sklearn.ensemble import RandomForestRegressor
 
 
-def load_data(path: str) -> pd.DataFrame:
+def load_data(path: str) -> Union[pd.DataFrame, dict]:
     """
     load .csv files
     """
-    data = pd.read_csv(path, encoding='utf-8')
+    if path.split(".")[-1] == "csv":
+        data = pd.read_csv(path, encoding='utf-8')
+
+    elif path.split(".")[-1] == "yaml":
+        with open(path, 'r', encoding='utf-8') as f:
+            data = yaml.load(f, Loader=yaml.FullLoader)
+    else:
+        raise ValueError("File type not supported.")
+
     return data
+
+
+def logarithm(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    log transformation function
+
+    Args:
+        data (pd.DataFrame): features
+
+    Returns:
+        pd.DataFrame: features with log transformation
+    """
+    return data.apply(lambda x: np.log1p(x))
+
+
+def train_test_split(
+        feat: pd.DataFrame,
+        label: pd.Series,
+        ratio: float
+    ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+    """
+    Split data into training and testing sets
+
+    Args:
+        feat (pd.DataFrame): features
+        label (pd.Series): labels
+        ratio (float): train / test ratio
+
+    Returns:
+        Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]
+    """
+    x_train, x_valid = \
+        feat[:int(len(feat) * ratio)], feat[int(len(feat) * ratio):]
+
+    y_train, y_valid = \
+        label[:int(len(label) * ratio)], label[int(len(label) * ratio):]
+    return x_train, x_valid, y_train, y_valid
+
 
 
 def one_hot_encoding(data: pd.DataFrame, cat_cols: List[str]) -> pd.DataFrame:
@@ -55,7 +102,7 @@ def feature_select(
         pred_target: str,
         dims: int,
         model=RandomForestRegressor,
-    ) -> Tuple(pd.DataFrame, pd.Series):
+    ) -> Tuple[pd.DataFrame, pd.Series]:
     """
     Feature selection function
     
