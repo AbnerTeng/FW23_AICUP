@@ -1,0 +1,8 @@
+num_iterations: 588
+learning_rate: 0.018049943310703906
+num_leaves: 829
+subsample: 0.8920214447324074
+colsample_bytree: 0.5330930972309851
+min_data_in_leaf: 25
+max_bin: 505
+random_state: 42

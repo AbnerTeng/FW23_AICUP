@@ -1,0 +1,6 @@
+objective: reg:squarederror
+n_estimators: 1000
+learning_rate: 0.05
+max_depth: 7
+reg_alpha: 0.05
+random_state: 42

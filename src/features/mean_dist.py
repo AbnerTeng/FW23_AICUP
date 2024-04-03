@@ -9,13 +9,10 @@ Arguments:
 Example:
     python -m src.mean_dist --k 3
 """
-import os
 from typing import Tuple
-from argparse import ArgumentParser
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-from tqdm import tqdm
 from shapely.geometry import Point
 from ..utils.data_utils import (
     load_data,
@@ -35,7 +32,7 @@ class MeanDist:
         self.k = k
 
 
-    def split_data(self) -> Tuple(pd.DataFrame, pd.DataFrame):
+    def split_data(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """
         Get the (x, y) for facility and target
         """
@@ -55,10 +52,10 @@ class MeanDist:
         """
         facility_pos, target_pos = np.array(facility_pos), np.array(target_pos)
         nbrs = NearestNeighbors(
-            n_neighbors = k,
+            n_neighbors=k,
         )
         nbrs.fit(facility_pos)
-        distances, _ = nbrs.kneighbors(target_pos, n_neighbors = k)
+        distances, _ = nbrs.kneighbors(target_pos, n_neighbors=k)
         return distances
 
 
@@ -76,7 +73,7 @@ class MeanDist:
         )
 
         self.facilities_with_dist = self.facilities_with_dist.sort_values(
-            by = 'distance',
+            by='distance',
             ascending=True
         )
 
@@ -108,26 +105,3 @@ class MeanDist:
         avg_distances = np.mean(distances, axis = 1)
         self.target[f'avg_distances_{self.facility_name}'] = avg_distances
         print(self.target.head())
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument('--k', type = int, default = 3)
-    args = parser.parse_args()
-    TARGET_PATH = f"{os.getcwd()}/data/training_data.csv"
-
-    for external_datas in tqdm(os.listdir(f"{os.getcwd()}/data/external_data")):
-        file_name = external_datas.split('.')[0].replace('資料', '')
-
-        print(f"{os.getcwd()}/data/external_data/{external_datas}")
-        md = MeanDist(
-            f"{os.getcwd()}/data/external_data/{external_datas}",
-            TARGET_PATH,
-            args.k,
-            file_name
-        )
-
-        md.update_dataframe(column_name=f"mean_distance_to_{file_name}").to_csv(
-            f"{os.getcwd()}/data/small_training_data.csv", 
-            index=False
-        )

@@ -1,0 +1,11 @@
+iterations: 1000
+depth: 10
+learning_rate: 0.087
+l2_leaf_reg: 0.0715564
+subsample: 0.7963
+colsample_bylevel: 0.94634
+bagging_temperature: 0.0709
+border_count: 232
+random_strength: 0.63275
+verbose: False
+random_state: 42

@@ -1,3 +1,6 @@
+# Jypter Notebook file
+*.ipynb
+
 # DO NOT PUSH DATA
 data/
 # Byte-compiled / optimized / DLL files
@@ -10,6 +13,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+catboost_info/
 .Python
 build/
 develop-eggs/
