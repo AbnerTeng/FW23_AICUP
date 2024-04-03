@@ -9,14 +9,32 @@ Team member: 鄧昱辰、林冠妤、陳瑾叡、游孟純、劉子豪
     - /external_data
     - training_data.csv
     - pred.csv
+    - Lots of data
+- /configs
+    - catbr.yaml
+    - lgbmr.yaml
+    - xgbr.yaml
+- /scripts/
+    - run.sh
 - /src
+    - features/
+	- __init__.py
+	- mean_dist.py
+	- merge_lib_can_del.py
+	- n_facilities_v2.py
+	- preprocessing_edu_v2.py
+	- soc_econ.py
+    - model/
+	- __init__.py
+	- stacking.py
+	- tuning.py
     - __init__.py
-    - predict.py
+    - encoder.py
     - preproc.py
-    - utils.py
-    - building_dist.py
-    - knn_test.py
-    - n_facilities.py
+    - main.py
+    - pipeline.py
+    - script.py
+    - visualization.py
 - /test
 - map.R
 - .gitignore
@@ -24,6 +42,7 @@ Team member: 鄧昱辰、林冠妤、陳瑾叡、游孟純、劉子豪
 - README.md
 - requirements.txt
 - requirements_dev.txt
+- columns.json
 ```
 
 ## Create virtual environment (optional but suggest)
@@ -74,5 +93,5 @@ argument `--dims` is the number of features in use.
 Plz execute on the root directory
 
 ```plaintext
-python -m src.python_file
+python -m src.pipeline
 ```
