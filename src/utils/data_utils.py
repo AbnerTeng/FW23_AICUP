@@ -13,7 +13,10 @@ def load_data(path: str) -> Union[pd.DataFrame, dict]:
     """
     load .csv files
     """
-    if path.split(".")[-1] == "csv":
+    if path is None:
+        return None
+
+    elif path.split(".")[-1] == "csv":
         data = pd.read_csv(path, encoding='utf-8')
 
     elif path.split(".")[-1] == "yaml":

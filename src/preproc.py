@@ -30,9 +30,9 @@ class PreProc:
             target_path: str,
             _type: str
         ) -> None:
-        self.raw_data = load_data(raw_data_path) ## raw1
-        self.feat_data = load_data(feat_data_path) ## feat1
-        self.target_data = load_data(target_path) ## target1
+        self.raw_data = load_data(raw_data_path)
+        self.feat_data = load_data(feat_data_path)
+        self.target_data = load_data(target_path)
         self.raw_data['縣市_鄉鎮市區'] = self.raw_data['縣市'] + '_' + self.raw_data['鄉鎮市區']
         self.type = _type
 
@@ -44,7 +44,12 @@ class PreProc:
         Select features based on the importance
         """
         selected_features = self.feat_data[feat_cols]
-        cat_x = self.raw_data[cat_cols + ['單價']]
+
+        if "單價" in self.raw_data.columns:
+            cat_x = self.raw_data[cat_cols + ['單價']]
+        else:
+            cat_x = self.raw_data[cat_cols]
+
         x_data = pd.concat([selected_features, cat_x], axis=1)
 
         if self.type == 'train':

@@ -63,12 +63,15 @@ if __name__ == "__main__":
     x_tr, x_vl, y_tr, y_vl, test_x, private_x = train_preproc.encode_cat_features(
         cols['cat_cols'], train_x, test_x, private_x, train_y
     )
+
+    print("Start training...")
+
     stack_model = stacking()
     stack_model.fit(x_tr, y_tr)
     y_pred = stack_model.predict(x_vl)
     y_pred = np.exp(y_pred)
     mape = mean_absolute_percentage_error(y_vl, y_pred)
-    print(f"MAPE: {mape} * 100")
+    print(f"MAPE: {mape * 100}")
 
     if args.tune:
         tuner = ParamTuner(x_tr, y_tr, x_vl, y_vl)
